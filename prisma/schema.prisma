@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Status {
+  DRAFT
+  PUBLISHED
+}
+
+model MenuItem {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  price       Int
+  image       String
+  order       Int
+  featured    Boolean @default(false)
+  status      Status  @default(DRAFT)
+}
+
+model GalleryImage {
+  id      String @id @default(cuid())
+  image   String
+  caption String
+  order   Int
+  status  Status @default(DRAFT)
+}
+
+model StaffMember {
+  id          String @id @default(cuid())
+  name        String
+  designation String
+  photo       String
+  order       Int
+}
+
+model Home {
+  id         String @id @default(cuid())
+  headline   String
+  subtext    String
+  buttonText String
+  status     Status @default(DRAFT)
+}
+
+model About {
+  id     String @id @default(cuid())
+  story  String
+  photo  String
+  status Status @default(DRAFT)
+}
+
+model Contact {
+  id      String @id @default(cuid())
+  address String
+  phone   String
+  email   String
+  hours   String
+  status  Status @default(DRAFT)
+}
