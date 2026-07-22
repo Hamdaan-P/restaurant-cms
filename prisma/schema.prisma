@@ -36,6 +36,7 @@ model StaffMember {
   designation String
   photo       String
   order       Int
+  status      Status @default(PUBLISHED)
 }
 
 model Home {
@@ -60,4 +61,11 @@ model Contact {
   email   String
   hours   String
   status  Status @default(DRAFT)
+}
+
+model SiteSettings {
+  id             String @id @default(cuid())
+  restaurantName String
+  tagline        String
+  status         Status @default(PUBLISHED)
 }

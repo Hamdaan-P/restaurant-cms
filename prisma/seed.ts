@@ -9,6 +9,7 @@ async function main() {
   await prisma.home.deleteMany();
   await prisma.about.deleteMany();
   await prisma.contact.deleteMany();
+  await prisma.siteSettings.deleteMany();
 
   await prisma.menuItem.createMany({
     data: [
@@ -111,18 +112,21 @@ async function main() {
         designation: "Executive Chef",
         photo: "https://placehold.co/600x400?text=Ravi+Shankar",
         order: 1,
+        status: Status.PUBLISHED,
       },
       {
         name: "Priya Nair",
         designation: "Head of Front of House",
         photo: "https://placehold.co/600x400?text=Priya+Nair",
         order: 2,
+        status: Status.PUBLISHED,
       },
       {
         name: "Arjun Mehta",
         designation: "Sous Chef",
         photo: "https://placehold.co/600x400?text=Arjun+Mehta",
         order: 3,
+        status: Status.PUBLISHED,
       },
     ],
   });
@@ -152,6 +156,14 @@ async function main() {
       phone: "+91 98765 43210",
       email: "hello@spicehouse.example",
       hours: "Mon–Sun: 11:00 AM – 11:00 PM",
+      status: Status.PUBLISHED,
+    },
+  });
+
+  await prisma.siteSettings.create({
+    data: {
+      restaurantName: "Spice House",
+      tagline: "A Taste of India, Served with Love",
       status: Status.PUBLISHED,
     },
   });
