@@ -1,0 +1,22 @@
+RESTAURANT CMS — PROGRESS LOG (Hamdaan, ZaryahPlus Task 4)
+
+PHASE 0 ✅ Concepts (5), content model designed, stack chosen, accounts created
+PHASE 1 ✅ COMPLETE (21 July 2026)
+  [x] GitHub repo: github.com/Hamdaan-P/restaurant-cms
+  [x] Next.js project at D:\Projects\restaurant-cms (TypeScript, Tailwind, App Router)
+  [x] CMS_Progress.txt created inside project
+  [x] Neon Postgres (Singapore) connected via DATABASE_URL in .env and .env.local
+  [x] Prisma 7 installed; 6 models written in prisma/schema.prisma
+  [x] Migration applied — 6 tables live in Neon (migration: 20260721054704_init)
+  [x] Committed and pushed to GitHub
+
+  Models: MenuItem, GalleryImage, StaffMember, Home, About, Contact
+  Every model has status (DRAFT/PUBLISHED), createdAt, updatedAt
+  Lists (MenuItem, GalleryImage, StaffMember) also have order
+
+  Note: Prisma 7 keeps the DB url in prisma.config.ts, NOT in schema.prisma
+
+PHASE 2 ⏭ NEXT — Public site: 5 pages reading content from the database
+PHASE 3 — Admin panel + Auth.js + schema-driven form-maker
+PHASE 4 — Draft/preview/publish + Cloudinary uploads + validation messages
+PHASE 5 — Deploy to Vercel + non-technical user test
