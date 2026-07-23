@@ -1,22 +1,35 @@
-RESTAURANT CMS — PROGRESS LOG (Hamdaan, ZaryahPlus Task 4)
+RESTAURANT CMS — ZaryahPlus Task 4
+Progress log
 
-PHASE 0 ✅ Concepts (5), content model designed, stack chosen, accounts created
-PHASE 1 ✅ COMPLETE (21 July 2026)
-  [x] GitHub repo: github.com/Hamdaan-P/restaurant-cms
-  [x] Next.js project at D:\Projects\restaurant-cms (TypeScript, Tailwind, App Router)
-  [x] CMS_Progress.txt created inside project
-  [x] Neon Postgres (Singapore) connected via DATABASE_URL in .env and .env.local
-  [x] Prisma 7 installed; 6 models written in prisma/schema.prisma
-  [x] Migration applied — 6 tables live in Neon (migration: 20260721054704_init)
-  [x] Committed and pushed to GitHub
+PHASE 0 ✅ Concepts, decisions, accounts (Neon, Cloudinary, Vercel)
+PHASE 1 ✅ Repo, Next.js, Neon connected, 6 models migrated
+PHASE 2 ✅ Public site complete (22 July 2026)
 
-  Models: MenuItem, GalleryImage, StaffMember, Home, About, Contact
-  Every model has status (DRAFT/PUBLISHED), createdAt, updatedAt
-  Lists (MenuItem, GalleryImage, StaffMember) also have order
+Phase 2 details:
+- src/lib/prisma.ts — shared Prisma client singleton (dotenv + PrismaPg adapter, Prisma 7)
+- prisma/seed.ts — destructive seed, run manually only
+- 5 pages, all reading live from Neon, all force-dynamic:
+    /          Home     — hero + featured dishes via featured:true reference
+    /menu      Menu     — list, status + order
+    /gallery   Gallery  — list, status + order
+    /about     About    — About record + StaffMember list (two queries)
+    /contact   Contact  — single record
+- app/layout.tsx — shared nav (hardcoded by design), title from SiteSettings
+- Schema gaps found and fixed: status added to StaffMember; SiteSettings model added
 
-  Note: Prisma 7 keeps the DB url in prisma.config.ts, NOT in schema.prisma
+Proven manually:
+- Edit in Prisma Studio → refresh → site updates, no code change
+- order change → dish moves position
+- status DRAFT → item disappears, page fine
+- one price edit → updates on /menu AND / (reference, not copy)
 
-PHASE 2 ⏭ NEXT — Public site: 5 pages reading content from the database
-PHASE 3 — Admin panel + Auth.js + schema-driven form-maker
-PHASE 4 — Draft/preview/publish + Cloudinary uploads + validation messages
-PHASE 5 — Deploy to Vercel + non-technical user test
+Known / deferred:
+- placehold.co images + plain <img>; switch to next/image + remotePatterns in Phase 4 (Cloudinary)
+- pg SSL warning — forward-compatibility notice, no action needed
+
+Environment notes:
+- Terminal 1 = npm run dev · Terminal 2 = one-off commands
+- After any prisma generate, restart the dev server
+
+NEXT: Phase 3 — admin panel, Auth.js login, schema-driven form-maker, confirmations
+
