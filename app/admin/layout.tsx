@@ -21,6 +21,12 @@ export default async function AdminLayout({
           </span>
           <div className="flex items-center gap-x-6">
             <Link
+              href="/admin/preview"
+              className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
+            >
+              Preview drafts
+            </Link>
+            <Link
               href="/"
               className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
             >

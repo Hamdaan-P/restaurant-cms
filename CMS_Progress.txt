@@ -1,35 +1,92 @@
-RESTAURANT CMS — ZaryahPlus Task 4
-Progress log
+CMS PROGRESS — Restaurant CMS (ZaryahPlus Task 4)
+Repo: github.com/Hamdaan-P/restaurant-cms
+Last updated: 23 July 2026 (end of Session 4)
 
-PHASE 0 ✅ Concepts, decisions, accounts (Neon, Cloudinary, Vercel)
-PHASE 1 ✅ Repo, Next.js, Neon connected, 6 models migrated
-PHASE 2 ✅ Public site complete (22 July 2026)
+--------------------------------------------------
+PHASE STATUS
+--------------------------------------------------
+Phase 0  DONE  Concepts, decisions, accounts (Neon, Cloudinary, Vercel)
+Phase 1  DONE  Repo, Next.js, Neon connection, schemas
+Phase 2  DONE  Public site — 5 pages, all database-driven, published-only
+Phase 3  DONE  Admin panel
+  Step 1  DONE  AdminUser model + bcrypt + create-admin script + account created
+  Step 2  DONE  Auth.js login, JWT sessions (8h), proxy.ts route protection
+  Step 3a DONE  contentTypes registry, admin layout, dashboard, dynamic list page
+  Step 3b DONE  FormMaker, shared Server Action, create/edit, draft vs publish
+  Step 3c DONE  Reorder (swap in transaction), delete with confirmation dialog
+Phase 4  NEXT  Cloudinary uploads + image validation + preview mode
+                + switch placehold.co <img> to next/image + remotePatterns
+Phase 5  TODO  Deploy on Vercel + real non-coder test + fix confusions
+Submit   TODO  README, live URLs, test login, video, completion report
 
-Phase 2 details:
-- src/lib/prisma.ts — shared Prisma client singleton (dotenv + PrismaPg adapter, Prisma 7)
-- prisma/seed.ts — destructive seed, run manually only
-- 5 pages, all reading live from Neon, all force-dynamic:
-    /          Home     — hero + featured dishes via featured:true reference
-    /menu      Menu     — list, status + order
-    /gallery   Gallery  — list, status + order
-    /about     About    — About record + StaffMember list (two queries)
-    /contact   Contact  — single record
-- app/layout.tsx — shared nav (hardcoded by design), title from SiteSettings
-- Schema gaps found and fixed: status added to StaffMember; SiteSettings model added
+--------------------------------------------------
+WHAT EXISTS NOW
+--------------------------------------------------
+- 8 models: MenuItem, GalleryImage, Contact, Home, About, StaffMember,
+  SiteSettings, AdminUser. Every content model has status; every list model has order.
+- src/lib/prisma.ts — shared Prisma client (dotenv + PrismaPg, singleton)
+- prisma/seed.ts — DESTRUCTIVE seed, manual only, never after launch
+- prisma/create-admin.ts — non-destructive upsert, bcrypt 10 rounds
+- auth.ts — Credentials provider, bcrypt compare, JWT sessions, 8h maxAge
+- proxy.ts — guards /admin/* except /admin/login  (Next.js 16 renamed middleware.ts)
+- src/lib/contentTypes.ts — THE REGISTRY: label, prismaModel, kind, hasOrder,
+  hasStatus, listDisplayField, fields[] with input kind + requiredMessage
+- src/components/FormMaker.tsx — draws any form from the registry
+- src/components/ConfirmDialog.tsx — generic confirm/cancel modal
+- src/components/ListRowControls.tsx — up / down / delete per row
+- src/components/PublicNav.tsx — hides itself on /admin paths
+- app/admin/actions.ts — one Server Action file for ALL types:
+  saveContentItem, deleteContentItem, moveContentItem
+- Admin routes (NO per-type page files):
+  /admin (dashboard from registry) - /admin/[type] - /admin/[type]/new
+  /admin/[type]/[id] - /admin/login
+- 5 public pages unchanged, force-dynamic, PUBLISHED rows only
 
-Proven manually:
-- Edit in Prisma Studio → refresh → site updates, no code change
-- order change → dish moves position
-- status DRAFT → item disappears, page fine
-- one price edit → updates on /menu AND / (reference, not copy)
+--------------------------------------------------
+PROVEN MANUALLY THIS SESSION (goes in the video)
+--------------------------------------------------
+- /admin logged out -> bounced to /admin/login; direct URL also bounced
+- Wrong password -> "Invalid email or password."; correct -> /admin shows email
+- Sign out -> /admin bounced again
+- Admin list shows DRAFT rows; public /menu does not (6 vs 5)
+- Empty required field -> "Please add a name for this dish."
+- Created Chicken 65 as DRAFT (order auto = max+1), invisible on /menu
+- Published it -> appeared on /menu immediately
+- Up arrow swapped order 6 <-> 7; first row's up arrow disabled
+- Delete showed named confirmation; Cancel changed nothing; confirm deleted
+  and renumbered survivors with no gap
 
-Known / deferred:
-- placehold.co images + plain <img>; switch to next/image + remotePatterns in Phase 4 (Cloudinary)
-- pg SSL warning — forward-compatibility notice, no action needed
+--------------------------------------------------
+FIRST THREE THINGS NEXT SESSION
+--------------------------------------------------
+1. Say "Starting Phase 4"
+2. Cloudinary upload widget replacing the image URL text box
+3. Image type + size validation, then preview mode for drafts
 
-Environment notes:
-- Terminal 1 = npm run dev · Terminal 2 = one-off commands
-- After any prisma generate, restart the dev server
+--------------------------------------------------
+DEFERRED DELIBERATELY
+--------------------------------------------------
+- placehold.co images still plain <img>; next/image + remotePatterns in Phase 4
+- pg SSL warning — forward-compatibility notice, no action
+- ADMIN_PASSWORD is a simple demo credential to hand over; rotate it before the
+  deployed site holds real client content
+- Cold start (first request after idle) is slow: route compile + Neon wake.
+  Not a bug — mention in README.
+- migrate dev can trigger the destructive seed and wipe content. Never run it
+  against a database with real client content — README warning needed.
 
-NEXT: Phase 3 — admin panel, Auth.js login, schema-driven form-maker, confirmations
+--------------------------------------------------
+GIT
+--------------------------------------------------
+74a416f  shared Prisma client, seed, Contact page
+80b2562  Menu, Gallery, About, Home, nav, StaffMember status, SiteSettings
+(new)    Add admin panel: Auth.js login, schema-driven forms, reorder and
+         confirmed delete
 
+--------------------------------------------------
+ENVIRONMENT REMINDERS
+--------------------------------------------------
+Terminal 1 = npm run dev - Terminal 2 = one-off commands
+Closing VS Code kills running terminals — restart the dev server after
+After any prisma generate, restart the dev server
+Check every commit's file list for secrets — .env must never appear

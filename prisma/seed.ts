@@ -18,7 +18,7 @@ async function main() {
         description:
           "Tender tandoori chicken simmered in a rich, creamy tomato gravy with butter and fenugreek.",
         price: 450,
-        image: "https://placehold.co/600x400?text=Butter+Chicken",
+        image: "https://placehold.co/600x400.png?text=Butter+Chicken",
         order: 1,
         featured: true,
         status: Status.PUBLISHED,
@@ -28,7 +28,7 @@ async function main() {
         description:
           "Chargrilled paneer cubes tossed in a spiced onion-tomato masala with bell peppers.",
         price: 380,
-        image: "https://placehold.co/600x400?text=Paneer+Tikka+Masala",
+        image: "https://placehold.co/600x400.png?text=Paneer+Tikka+Masala",
         order: 2,
         featured: false,
         status: Status.PUBLISHED,
@@ -38,7 +38,7 @@ async function main() {
         description:
           "Slow-cooked lamb in a fragrant Kashmiri chili and yogurt gravy with warm spices.",
         price: 520,
-        image: "https://placehold.co/600x400?text=Lamb+Rogan+Josh",
+        image: "https://placehold.co/600x400.png?text=Lamb+Rogan+Josh",
         order: 3,
         featured: true,
         status: Status.PUBLISHED,
@@ -48,7 +48,7 @@ async function main() {
         description:
           "Fragrant basmati rice layered with marinated chicken, saffron, and fried onions.",
         price: 420,
-        image: "https://placehold.co/600x400?text=Hyderabadi+Biryani",
+        image: "https://placehold.co/600x400.png?text=Hyderabadi+Biryani",
         order: 4,
         featured: false,
         status: Status.PUBLISHED,
@@ -58,7 +58,7 @@ async function main() {
         description:
           "Crisp fermented rice-and-lentil crepe filled with spiced potato masala, served with sambar and chutney.",
         price: 220,
-        image: "https://placehold.co/600x400?text=Masala+Dosa",
+        image: "https://placehold.co/600x400.png?text=Masala+Dosa",
         order: 5,
         featured: false,
         status: Status.PUBLISHED,
@@ -68,7 +68,7 @@ async function main() {
         description:
           "Warm milk-solid dumplings soaked in rose and cardamom scented sugar syrup.",
         price: 150,
-        image: "https://placehold.co/600x400?text=Gulab+Jamun",
+        image: "https://placehold.co/600x400.png?text=Gulab+Jamun",
         order: 6,
         featured: false,
         status: Status.PUBLISHED,
@@ -79,25 +79,25 @@ async function main() {
   await prisma.galleryImage.createMany({
     data: [
       {
-        image: "https://placehold.co/600x400?text=Dining+Hall",
+        image: "https://placehold.co/600x400.png?text=Dining+Hall",
         caption: "Our warmly lit main dining hall",
         order: 1,
         status: Status.PUBLISHED,
       },
       {
-        image: "https://placehold.co/600x400?text=Tandoor+Kitchen",
+        image: "https://placehold.co/600x400.png?text=Tandoor+Kitchen",
         caption: "Fresh naan straight from the tandoor",
         order: 2,
         status: Status.PUBLISHED,
       },
       {
-        image: "https://placehold.co/600x400?text=Outdoor+Seating",
+        image: "https://placehold.co/600x400.png?text=Outdoor+Seating",
         caption: "Evenings on our outdoor patio",
         order: 3,
         status: Status.PUBLISHED,
       },
       {
-        image: "https://placehold.co/600x400?text=Chefs+Table",
+        image: "https://placehold.co/600x400.png?text=Chefs+Table",
         caption: "Chef's table plating a biryani",
         order: 4,
         status: Status.PUBLISHED,
@@ -110,21 +110,21 @@ async function main() {
       {
         name: "Ravi Shankar",
         designation: "Executive Chef",
-        photo: "https://placehold.co/600x400?text=Ravi+Shankar",
+        photo: "https://placehold.co/600x400.png?text=Ravi+Shankar",
         order: 1,
         status: Status.PUBLISHED,
       },
       {
         name: "Priya Nair",
         designation: "Head of Front of House",
-        photo: "https://placehold.co/600x400?text=Priya+Nair",
+        photo: "https://placehold.co/600x400.png?text=Priya+Nair",
         order: 2,
         status: Status.PUBLISHED,
       },
       {
         name: "Arjun Mehta",
         designation: "Sous Chef",
-        photo: "https://placehold.co/600x400?text=Arjun+Mehta",
+        photo: "https://placehold.co/600x400.png?text=Arjun+Mehta",
         order: 3,
         status: Status.PUBLISHED,
       },
@@ -145,7 +145,7 @@ async function main() {
     data: {
       story:
         "Founded by a family of home cooks, our restaurant brings recipes passed down through generations to the table, blending traditional spice-blending techniques with a modern dining experience.",
-      photo: "https://placehold.co/600x400?text=Our+Story",
+      photo: "https://placehold.co/600x400.png?text=Our+Story",
       status: Status.PUBLISHED,
     },
   });

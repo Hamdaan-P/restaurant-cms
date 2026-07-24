@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//tmp/**)",
+      "Bash(break)",
+      "Bash(curl -s http://localhost:3000/contact)",
+      "Bash(git status *)",
+      "Bash(git commit *)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(npm install *)",
+      "Bash(git check-ignore *)",
+      "Bash(mkdir -p \"d:/Projects/restaurant-cms/app/api/auth/[...nextauth]\")"
+    ],
+    "additionalDirectories": [
+      "d:\\Projects\\restaurant-cms\\app\\api\\auth"
+    ]
+  }
+}

@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import type { ContentField } from "@/lib/contentTypes";
 import { saveContentItem, type ActionState } from "../../app/admin/actions";
+import { ImageUploader } from "./ImageUploader";
 
 const initialState: ActionState = { errors: {} };
 
@@ -135,13 +136,10 @@ function renderInput(field: ContentField, defaultValue: unknown) {
       );
     case "image":
       return (
-        <input
-          id={field.name}
+        <ImageUploader
           name={field.name}
-          type="text"
-          placeholder="https://..."
-          defaultValue={typeof defaultValue === "string" ? defaultValue : ""}
-          className={inputClasses}
+          label={field.label}
+          value={typeof defaultValue === "string" ? defaultValue : ""}
         />
       );
     case "text":

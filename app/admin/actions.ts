@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import type { Prisma } from "@prisma/client";
 import { auth } from "../../auth";
 import { prisma } from "@/lib/prisma";
+import { cloudinary } from "@/lib/cloudinary";
 import { getContentType, type ContentField, type PrismaModelKey } from "@/lib/contentTypes";
 
 export type ActionState = {
@@ -154,6 +155,29 @@ export async function deleteContentItem(
 
   revalidatePath(`/admin/${typeKey}`);
   revalidatePath("/", "layout");
+}
+
+export async function signUpload() {
+  const session = await auth();
+  if (!session) {
+    throw new Error("You must be signed in to do that.");
+  }
+
+  const timestamp = Math.round(Date.now() / 1000);
+  const folder = "restaurant-cms";
+
+  const signature = cloudinary.utils.api_sign_request(
+    { timestamp, folder },
+    process.env.CLOUDINARY_API_SECRET!
+  );
+
+  return {
+    signature,
+    timestamp,
+    apiKey: process.env.CLOUDINARY_API_KEY,
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+    folder,
+  };
 }
 
 export async function moveContentItem(
