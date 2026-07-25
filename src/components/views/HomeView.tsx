@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Home, MenuItem } from "@prisma/client";
 
 export function HomeView({
@@ -27,9 +28,12 @@ export function HomeView({
         <p className="mx-auto mt-4 max-w-2xl text-lg text-zinc-600">
           {home.subtext}
         </p>
-        <button className="mt-8 rounded-full bg-zinc-900 px-6 py-3 text-base font-medium text-white">
+        <Link
+          href="/menu"
+          className="mt-8 inline-block rounded-full bg-zinc-900 px-6 py-3 text-base font-medium text-white"
+        >
           {home.buttonText}
-        </button>
+        </Link>
       </div>
 
       {featuredDishes.length > 0 && (
