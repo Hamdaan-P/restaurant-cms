@@ -4,7 +4,6 @@ A content management system built from scratch for a restaurant client, as part 
 
 **Live site:** https://restaurant-cms-omega.vercel.app
 **Admin panel:** https://restaurant-cms-omega.vercel.app/admin
-**Test credentials:** `admin@zaryahplus.com` / `admin123` *(demo credential — will be rotated before any real client content)*
 
 ---
 
