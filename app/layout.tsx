@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { prisma } from "@/lib/prisma";
 import { PublicNav } from "@/components/PublicNav";
-import { Status } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,9 +16,13 @@ const geistMono = Geist_Mono({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteSettings = await prisma.siteSettings.findFirst({
-    where: { status: Status.PUBLISHED },
+  const siteSettingsRow = await prisma.siteSettings.findFirst({
+    where: { publishedData: { not: Prisma.DbNull } },
   });
+  const siteSettings = siteSettingsRow?.publishedData as
+    | { restaurantName: string; tagline: string }
+    | null
+    | undefined;
 
   return {
     title: siteSettings?.restaurantName ?? "Our Restaurant",

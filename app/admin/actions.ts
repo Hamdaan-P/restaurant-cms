@@ -101,7 +101,16 @@ export async function saveContentItem(
     return { errors };
   }
 
-  data.status = formData.get("intent") === "publish" ? "PUBLISHED" : "DRAFT";
+  const isPublish = formData.get("intent") === "publish";
+  data.status = isPublish ? "PUBLISHED" : "DRAFT";
+
+  if (isPublish) {
+    const snapshot: Record<string, unknown> = {};
+    for (const field of contentType.fields) {
+      snapshot[field.name] = data[field.name];
+    }
+    data.publishedData = snapshot;
+  }
 
   const delegate = delegates[contentType.prismaModel];
 

@@ -1,7 +1,11 @@
 import Image from "next/image";
 import type { MenuItem } from "@prisma/client";
 
-export function MenuView({ menuItems }: { menuItems: MenuItem[] }) {
+export function MenuView({
+  menuItems,
+}: {
+  menuItems: Pick<MenuItem, "id" | "name" | "description" | "price" | "image">[];
+}) {
   if (menuItems.length === 0) {
     return (
       <main className="mx-auto max-w-2xl px-6 py-24 text-center">

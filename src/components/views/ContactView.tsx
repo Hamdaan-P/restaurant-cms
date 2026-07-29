@@ -1,6 +1,8 @@
-import type { Contact } from "@prisma/client";
-
-export function ContactView({ contact }: { contact: Contact | null }) {
+export function ContactView({
+  contact,
+}: {
+  contact: { address: string; phone: string; email: string; hours: string } | null;
+}) {
   if (!contact) {
     return (
       <main className="mx-auto max-w-2xl px-6 py-24 text-center">

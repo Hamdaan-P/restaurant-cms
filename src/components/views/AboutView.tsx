@@ -1,12 +1,12 @@
 import Image from "next/image";
-import type { About, StaffMember } from "@prisma/client";
+import type { StaffMember } from "@prisma/client";
 
 export function AboutView({
   about,
   staffMembers,
 }: {
-  about: About | null;
-  staffMembers: StaffMember[];
+  about: { story: string; photo: string } | null;
+  staffMembers: Pick<StaffMember, "id" | "name" | "designation" | "photo">[];
 }) {
   if (!about) {
     return (

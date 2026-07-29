@@ -4,7 +4,7 @@ import type { GalleryImage } from "@prisma/client";
 export function GalleryView({
   galleryImages,
 }: {
-  galleryImages: GalleryImage[];
+  galleryImages: Pick<GalleryImage, "id" | "image" | "caption">[];
 }) {
   if (galleryImages.length === 0) {
     return (

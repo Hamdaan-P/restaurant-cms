@@ -1,111 +1,22 @@
-RESTAURANT CMS — PROGRESS
-github.com/Hamdaan-P/restaurant-cms
-Last updated: end of Phase 4, commit 2c2c1a5
+=== REVIEW SESSION R1 — 28 July 2026 ===
+Yousef's code review received (CMS_Review.pdf). 3 blockers, 4 majors, 5 minors.
 
-WHERE I AM
-Phases 1-4 complete and pushed. Phase 5 not started.
+BLOCK 1 — DONE (before this session): admin password rotated locally + on Vercel,
+  old password dead. STILL TODO: strip credentials from README + git history.
 
-STACK
-Next.js 16.2.10 (Turbopack), Postgres on Neon, Prisma, Auth.js,
-Cloudinary, Tailwind. Deploy target Vercel (Hobby, team "hamdaanpeshimam").
+BLOCK 2 — DONE + COMMITTED (a9391db): Enter-key unpublish bug fixed.
+  FormMaker.tsx — Publish is now the first submit button, so Enter publishes
+  instead of silently unpublishing. Verified live: Enter publishes; mouse-click
+  Save as draft still drafts. 1 file, 6 insertions / 6 deletions.
 
-WHAT EXISTS
-- auth.ts — Auth.js Credentials login, bcrypt compare, JWT sessions (8h)
-- proxy.ts — guards every /admin URL except /admin/login
-  (Next.js 16 renamed middleware.ts to proxy.ts)
-- src/lib/contentTypes.ts — the registry: label, prismaModel, kind,
-  hasOrder, hasStatus, listDisplayField, fields[] with input kind and
-  requiredMessage
-- src/lib/cloudinary.ts — configures the Cloudinary v2 client from
-  server-only env vars
-- src/components/FormMaker.tsx — draws any form from the registry
-- src/components/ImageUploader.tsx — file picker, type/size validation,
-  signed upload, preview thumbnail, replace
-- src/components/ConfirmDialog.tsx — generic confirm/cancel modal
-- src/components/ListRowControls.tsx — up / down / delete per row
-- src/components/PublicNav.tsx — hides itself on /admin paths
-- src/components/PreviewBanner.tsx — sticky amber PREVIEW MODE banner
-- src/components/views/ — HomeView, AboutView, GalleryView, MenuView,
-  ContactView. Presentational only, take already-fetched Prisma rows as
-  props. Public routes and preview routes both render these.
-- app/admin/actions.ts — one Server Action file for all 7 types:
-  saveContentItem, deleteContentItem, moveContentItem, signUpload.
-  Each checks auth() before doing anything.
-- scripts/fix-placeholder-urls.ts — one-off idempotent data fix
-  (npm run fix-placeholder-urls)
-- Admin routes with zero per-type page files: /admin, /admin/[type],
-  /admin/[type]/new, /admin/[type]/[id], /admin/login
-- Preview routes: /admin/preview, /admin/preview/[page]
-- 8 models incl. AdminUser; 5 public pages, force-dynamic,
-  PUBLISHED rows only
+NEXT: BLOCK 3 — real draft flow vs. accurate docs. Either implement a true
+  draft (publishedData column or revisions table) OR rename it "publish/unpublish
+  toggle" honestly in README + Known Limitations. Design decision required.
 
-HOW IMAGES WORK NOW
-Browser asks signUpload -> server checks auth() -> signs with
-CLOUDINARY_API_SECRET -> browser uploads the file straight to Cloudinary
--> Cloudinary returns secure_url -> that URL is stored in the image field.
-The secret never leaves the server. Validation is JPEG/PNG/WebP only,
-max 5 MB, checked in the browser before upload.
-
-next.config.ts allows remotePatterns for res.cloudinary.com and
-placehold.co only. Every content <img> is now next/image using fill plus
-a sizes prop, because user-supplied images have no known dimensions.
-
-HOW PREVIEW WORKS
-Public routes fetch with status PUBLISHED and hand rows to a View.
-/admin/preview/[page] runs the same query without the status filter and
-hands rows to the same View. Guarded by the existing proxy.ts matcher
-/admin/((?!login).*) — no separate auth check was added.
-
-PROVEN MANUALLY
-Phase 3: logged-out /admin bounces; wrong password gives one vague
-message; admin shows DRAFT rows and the public site does not; empty
-required field gives a human message; created a dish as DRAFT then
-published it and it appeared instantly; up arrow swapped two order
-values; delete confirmed by name, cancel changed nothing, survivors
-renumbered with no gap.
-
-Phase 4: valid PNG and valid JPEG both uploaded successfully and appear
-in the Cloudinary restaurant-cms folder; a PDF was rejected with the type
-message; a 13.9 MB PNG was rejected with the real size named; on both
-rejections the existing thumbnail survived untouched; fix-placeholder-urls
-run twice gave 14 rows then 0 rows; the script skipped Cloudinary rows
-(MenuItem reported 6, not 7); all five public pages verified after the
-View refactor with no draft leaking to the public menu; preview shows 7
-dishes including DRAFT Gulab Jamun while public shows 6; /admin/preview
-while logged out redirects to /admin/login (verified in Edge InPrivate).
-
-DEFERRED DELIBERATELY
-- CLOUDINARY_API_SECRET! uses a TypeScript non-null assertion. It
-  silences the compiler without checking, so a missing key crashes
-  confusingly at upload time instead of clearly at startup.
-- No Cloudinary-side upload restrictions. Browser validation alone is
-  bypassable by anyone technical.
-- .env values are demo credentials and were exposed during Phase 4.
-  Rotate all four before client handover: Neon password, AUTH_SECRET,
-  Cloudinary key/secret, ADMIN_PASSWORD. Changing ADMIN_PASSWORD also
-  needs the seed re-run, since the hash lives in the database.
-- .claude/settings.json was committed by mistake; add .claude/ to
-  .gitignore.
-- pg SSL warning — forward-compatibility notice, no action.
-- 6 npm audit vulnerabilities in build tooling. Do not run
-  npm audit fix --force.
-- Client cannot change their own password — deliberate, README note.
-- Shareable secret-link preview for non-admins — future enhancement.
-
-README NOTES OWED TO THE CLIENT
-- Images must be uploaded through the CMS. Pasted external URLs will not
-  render, because only res.cloudinary.com and placehold.co are
-  whitelisted in remotePatterns.
-- ADMIN_PASSWORD is a demo credential to hand over; rotate before real
-  client content.
-- Client cannot change their own password.
-
-ENVIRONMENT
-Terminal 1 = npm run dev. Terminal 2 = one-off commands.
-After any prisma generate, restart the dev server.
-next.config.ts changes also require a dev server restart.
-Component changes hot-reload and need no restart.
-Closing VS Code kills both terminals.
-
-NEXT
-Phase 5 — not yet scoped.
+STILL OPEN from review:
+  Blockers: BLOCK 3
+  Majors: 4 error handling in actions/handlers · 5 numeric bounds + wrong msg ·
+          6 enforce single-instance types · 7 server-side upload restrictions ·
+          first tests (coerceField, reorder, delete-compaction)
+  Minors: 8 order base · 9 orphaned Cloudinary assets · 10 caching contradiction ·
+          11 README relation accuracy · 12 route matcher lookahead

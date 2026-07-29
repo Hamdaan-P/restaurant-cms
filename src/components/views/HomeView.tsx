@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Home, MenuItem } from "@prisma/client";
+import type { MenuItem } from "@prisma/client";
 
 export function HomeView({
   home,
   featuredDishes,
 }: {
-  home: Home | null;
-  featuredDishes: MenuItem[];
+  home: { headline: string; subtext: string; buttonText: string } | null;
+  featuredDishes: Pick<MenuItem, "id" | "name" | "description" | "price" | "image">[];
 }) {
   if (!home) {
     return (
