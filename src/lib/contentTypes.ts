@@ -13,6 +13,9 @@ export interface ContentField {
   required: boolean;
   requiredMessage: string;
   helpText?: string;
+  min?: number;
+  max?: number;
+  invalidMessage?: string;
 }
 
 /** Delegate property name on the shared Prisma client (@/lib/prisma). */
@@ -68,6 +71,9 @@ export const contentTypes: ContentType[] = [
         input: "number",
         required: true,
         requiredMessage: "Please set a price for this dish.",
+        min: 0,
+        max: 100000,
+        invalidMessage: "Please enter a valid price for this dish.",
       },
       {
         name: "image",

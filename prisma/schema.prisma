@@ -43,7 +43,7 @@ model StaffMember {
 }
 
 model Home {
-  id            String @id @default(cuid())
+  id            String @id @default("singleton")
   headline      String
   subtext       String
   buttonText    String
@@ -52,7 +52,7 @@ model Home {
 }
 
 model About {
-  id            String @id @default(cuid())
+  id            String @id @default("singleton")
   story         String
   photo         String
   status        Status @default(DRAFT)
@@ -60,7 +60,7 @@ model About {
 }
 
 model Contact {
-  id            String @id @default(cuid())
+  id            String @id @default("singleton")
   address       String
   phone         String
   email         String
@@ -70,7 +70,7 @@ model Contact {
 }
 
 model SiteSettings {
-  id             String @id @default(cuid())
+  id             String @id @default("singleton")
   restaurantName String
   tagline        String
   status         Status @default(PUBLISHED)

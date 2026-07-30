@@ -1,4 +1,5 @@
 import { test, expect, vi } from "vitest";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { saveContentItem } from "./actions";
 
@@ -45,8 +46,16 @@ test("publish/draft snapshot behaviour for Contact (single-kind)", async () => {
     hours: "10am-6pm",
   };
 
-  const record = await prisma.contact.create({
-    data: { ...v1, status: "DRAFT" },
+  // Contact is now a fixed-id singleton row shared with the real site, so we
+  // can't create a disposable second row. Snapshot whatever is there first,
+  // upsert the test fixture over it, then restore the original in `finally`
+  // instead of deleting the row outright.
+  const original = await prisma.contact.findUnique({ where: { id: "singleton" } });
+
+  const record = await prisma.contact.upsert({
+    where: { id: "singleton" },
+    update: { ...v1, status: "DRAFT" },
+    create: { id: "singleton", ...v1, status: "DRAFT" },
   });
 
   try {
@@ -87,6 +96,21 @@ test("publish/draft snapshot behaviour for Contact (single-kind)", async () => {
     });
     expect(afterRepublish.publishedData).toEqual(v2);
   } finally {
-    await prisma.contact.delete({ where: { id: record.id } });
+    if (original) {
+      await prisma.contact.update({
+        where: { id: "singleton" },
+        data: {
+          address: original.address,
+          phone: original.phone,
+          email: original.email,
+          hours: original.hours,
+          status: original.status,
+          publishedData:
+            original.publishedData === null ? Prisma.DbNull : original.publishedData,
+        },
+      });
+    } else {
+      await prisma.contact.delete({ where: { id: "singleton" } });
+    }
   }
 });

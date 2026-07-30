@@ -6,7 +6,8 @@ import type { Prisma } from "@prisma/client";
 import { auth } from "../../auth";
 import { prisma } from "@/lib/prisma";
 import { cloudinary } from "@/lib/cloudinary";
-import { getContentType, type ContentField, type PrismaModelKey } from "@/lib/contentTypes";
+import { getContentType, type PrismaModelKey } from "@/lib/contentTypes";
+import { coerceField } from "@/lib/coerceField";
 
 export type ActionState = {
   errors: Record<string, string>;
@@ -39,35 +40,6 @@ function getDelegate(
 }
 
 const delegates = prisma as unknown as Record<PrismaModelKey, Delegate>;
-
-function coerceField(
-  field: ContentField,
-  formData: FormData
-): { value?: unknown; error?: string } {
-  if (field.input === "boolean") {
-    return { value: formData.get(field.name) === "on" };
-  }
-
-  const raw = formData.get(field.name);
-  const value = typeof raw === "string" ? raw.trim() : "";
-
-  if (field.required && value === "") {
-    return { error: field.requiredMessage };
-  }
-
-  if (field.input === "number") {
-    if (value === "") {
-      return { value: null };
-    }
-    const parsed = Number(value);
-    if (Number.isNaN(parsed)) {
-      return { error: field.requiredMessage };
-    }
-    return { value: parsed };
-  }
-
-  return { value };
-}
 
 export async function saveContentItem(
   typeKey: string,
@@ -114,14 +86,21 @@ export async function saveContentItem(
 
   const delegate = delegates[contentType.prismaModel];
 
-  if (recordId) {
-    await delegate.update({ where: { id: recordId }, data });
-  } else {
-    if (contentType.hasOrder) {
-      const aggregate = await delegate.aggregate({ _max: { order: true } });
-      data.order = (aggregate._max.order ?? 0) + 1;
+  try {
+    if (recordId) {
+      await delegate.update({ where: { id: recordId }, data });
+    } else {
+      if (contentType.hasOrder) {
+        const aggregate = await delegate.aggregate({ _max: { order: true } });
+        data.order = (aggregate._max.order ?? 0) + 1;
+      }
+      await delegate.create({ data });
     }
-    await delegate.create({ data });
+  } catch {
+    return {
+      errors: {},
+      formError: "Something went wrong saving this. Please try again.",
+    };
   }
 
   revalidatePath(`/admin/${typeKey}`);
@@ -144,23 +123,30 @@ export async function deleteContentItem(
     throw new Error("You must be signed in to do that.");
   }
 
-  await prisma.$transaction(async (tx) => {
-    const delegate = getDelegate(tx, contentType.prismaModel);
+  try {
+    await prisma.$transaction(async (tx) => {
+      const delegate = getDelegate(tx, contentType.prismaModel);
 
-    const existing = await delegate.findUnique({ where: { id: recordId } });
-    if (!existing) {
-      throw new Error("Item not found.");
-    }
-
-    await delegate.delete({ where: { id: recordId } });
-
-    const remaining = await delegate.findMany({ orderBy: { order: "asc" } });
-    for (const [index, row] of remaining.entries()) {
-      if (row.order !== index) {
-        await delegate.update({ where: { id: String(row.id) }, data: { order: index } });
+      const existing = await delegate.findUnique({ where: { id: recordId } });
+      if (!existing) {
+        throw new Error("Item not found.");
       }
+
+      await delegate.delete({ where: { id: recordId } });
+
+      const remaining = await delegate.findMany({ orderBy: { order: "asc" } });
+      for (const [index, row] of remaining.entries()) {
+        if (row.order !== index) {
+          await delegate.update({ where: { id: String(row.id) }, data: { order: index } });
+        }
+      }
+    });
+  } catch (err) {
+    if (err instanceof Error && err.message === "Item not found.") {
+      throw err;
     }
-  });
+    throw new Error("Something went wrong deleting this. Please try again.");
+  }
 
   revalidatePath(`/admin/${typeKey}`);
   revalidatePath("/", "layout");
@@ -204,31 +190,38 @@ export async function moveContentItem(
     throw new Error("You must be signed in to do that.");
   }
 
-  await prisma.$transaction(async (tx) => {
-    const delegate = getDelegate(tx, contentType.prismaModel);
-    const rows = await delegate.findMany({ orderBy: { order: "asc" } });
-    const index = rows.findIndex((row) => String(row.id) === recordId);
-    if (index === -1) {
-      throw new Error("Item not found.");
-    }
+  try {
+    await prisma.$transaction(async (tx) => {
+      const delegate = getDelegate(tx, contentType.prismaModel);
+      const rows = await delegate.findMany({ orderBy: { order: "asc" } });
+      const index = rows.findIndex((row) => String(row.id) === recordId);
+      if (index === -1) {
+        throw new Error("Item not found.");
+      }
 
-    const targetIndex = direction === "up" ? index - 1 : index + 1;
-    if (targetIndex < 0 || targetIndex >= rows.length) {
-      return;
-    }
+      const targetIndex = direction === "up" ? index - 1 : index + 1;
+      if (targetIndex < 0 || targetIndex >= rows.length) {
+        return;
+      }
 
-    const current = rows[index];
-    const target = rows[targetIndex];
+      const current = rows[index];
+      const target = rows[targetIndex];
 
-    await delegate.update({
-      where: { id: String(current.id) },
-      data: { order: target.order },
+      await delegate.update({
+        where: { id: String(current.id) },
+        data: { order: target.order },
+      });
+      await delegate.update({
+        where: { id: String(target.id) },
+        data: { order: current.order },
+      });
     });
-    await delegate.update({
-      where: { id: String(target.id) },
-      data: { order: current.order },
-    });
-  });
+  } catch (err) {
+    if (err instanceof Error && err.message === "Item not found.") {
+      throw err;
+    }
+    throw new Error("Something went wrong reordering this. Please try again.");
+  }
 
   revalidatePath(`/admin/${typeKey}`);
   revalidatePath("/", "layout");

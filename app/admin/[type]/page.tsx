@@ -15,7 +15,7 @@ const delegates = prisma as unknown as Record<
   PrismaModelKey,
   {
     findMany: (args?: unknown) => Promise<Row[]>;
-    findFirst: (args?: unknown) => Promise<Row | null>;
+    findUnique: (args: { where: { id: string } }) => Promise<Row | null>;
   }
 >;
 
@@ -65,7 +65,7 @@ export default async function ContentTypePage({
         <SingleForm
           contentType={contentType}
           typeKey={type}
-          record={await delegate.findFirst()}
+          record={await delegate.findUnique({ where: { id: "singleton" } })}
         />
       )}
     </main>

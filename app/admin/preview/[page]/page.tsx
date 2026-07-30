@@ -29,7 +29,7 @@ export default async function AdminPreviewPage({
 
   switch (page) {
     case "home": {
-      const home = await prisma.home.findFirst();
+      const home = await prisma.home.findUnique({ where: { id: "singleton" } });
       const featuredDishes = home
         ? await prisma.menuItem.findMany({
             where: { featured: true },
@@ -39,7 +39,7 @@ export default async function AdminPreviewPage({
       return <HomeView home={home} featuredDishes={featuredDishes} />;
     }
     case "about": {
-      const about = await prisma.about.findFirst();
+      const about = await prisma.about.findUnique({ where: { id: "singleton" } });
       const staffMembers = about
         ? await prisma.staffMember.findMany({ orderBy: { order: "asc" } })
         : [];
@@ -58,7 +58,7 @@ export default async function AdminPreviewPage({
       return <MenuView menuItems={menuItems} />;
     }
     case "contact": {
-      const contact = await prisma.contact.findFirst();
+      const contact = await prisma.contact.findUnique({ where: { id: "singleton" } });
       return <ContactView contact={contact} />;
     }
     default:

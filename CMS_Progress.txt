@@ -1,22 +1,26 @@
-=== REVIEW SESSION R1 — 28 July 2026 ===
-Yousef's code review received (CMS_Review.pdf). 3 blockers, 4 majors, 5 minors.
+## === REVIEW SESSION R2 — 29 July 2026 ===
 
-BLOCK 1 — DONE (before this session): admin password rotated locally + on Vercel,
-  old password dead. STILL TODO: strip credentials from README + git history.
+BLOCK 3 — DONE + COMMITTED + PUSHED (c3e3948)
+Real draft/publish flow via publishedData JSON snapshot (Shape 1, not revisions table).
+- publishedData Json? column added to all public content types.
+- Migration backfills existing PUBLISHED rows → no live content lost.
+- Publish writes a registry-driven snapshot; Save as draft leaves publishedData untouched.
+- Public reads now key off "publishedData IS NOT NULL", not status = PUBLISHED.
+- Vitest added; test asserts publish snapshots + draft preserves live copy.
+- Break-on-purpose confirmed: draft-writes-snapshot break made the test go red; reverted → green.
+- Verified live (incognito): draft edit stays hidden, published copy survives, publish pushes new snapshot.
+- README draft→preview→publish claim is now true as written.
 
-BLOCK 2 — DONE + COMMITTED (a9391db): Enter-key unpublish bug fixed.
-  FormMaker.tsx — Publish is now the first submit button, so Enter publishes
-  instead of silently unpublishing. Verified live: Enter publishes; mouse-click
-  Save as draft still drafts. 1 file, 6 insertions / 6 deletions.
+ALL THREE BLOCKERS NOW CLEARED (Block 1, 2, 3 done).
 
-NEXT: BLOCK 3 — real draft flow vs. accurate docs. Either implement a true
-  draft (publishedData column or revisions table) OR rename it "publish/unpublish
-  toggle" honestly in README + Known Limitations. Design decision required.
+STILL OPEN — Majors (next session):
+- 4  error handling in actions/handlers
+- 5  numeric bounds + wrong invalid message
+- 6  enforce single-instance types in schema
+- 7  server-side upload restrictions (signed preset)
+- Tests: coerceField, reorder, delete-compaction
 
-STILL OPEN from review:
-  Blockers: BLOCK 3
-  Majors: 4 error handling in actions/handlers · 5 numeric bounds + wrong msg ·
-          6 enforce single-instance types · 7 server-side upload restrictions ·
-          first tests (coerceField, reorder, delete-compaction)
-  Minors: 8 order base · 9 orphaned Cloudinary assets · 10 caching contradiction ·
-          11 README relation accuracy · 12 route matcher lookahead
+Minors (8–12): order base, orphaned Cloudinary assets, caching contradiction, README relation accuracy, route matcher lookahead.
+
+Known limitation logged: Block 3 test runs against the real dev DB (cleans up after itself). Dedicated test DB = proper fix, later.
+Still pending from Block 1: strip old credentials from git history (README already scrubbed).

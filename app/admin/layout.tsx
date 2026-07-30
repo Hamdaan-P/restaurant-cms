@@ -9,7 +9,7 @@ export default async function AdminLayout({
 }>) {
   const [session, siteSettings] = await Promise.all([
     auth(),
-    prisma.siteSettings.findFirst(),
+    prisma.siteSettings.findUnique({ where: { id: "singleton" } }),
   ]);
 
   return (
