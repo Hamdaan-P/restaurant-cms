@@ -90,7 +90,7 @@ There are **zero per-type admin page files**. The routes `/admin/[type]`, `/admi
 - Admin is fully login-gated (`proxy.ts` guards every `/admin` route except login); wrong passwords get one deliberately vague message; sessions expire after 8 hours.
 - Every destructive action confirms first, by name, in a dialog — cancel changes nothing, and after a delete the remaining items renumber with no gaps.
 - Validation speaks human: an empty required field says something like "Please add a name for this dish," never a raw error.
-- Image uploads are validated for type (JPEG/PNG/WebP) and size (5 MB max) with human messages.
+- Image uploads are validated for type both in the browser and — crucially — on the server: allowed_formats is signed into the Cloudinary upload, so a non-image can't be slipped past by bypassing the browser. Size is checked in the browser (5 MB) with a hard server-side ceiling at Cloudinary's plan limit.
 - Drafts can be **previewed** exactly as visitors would see them (a sticky PREVIEW MODE banner makes the mode unmistakable) before a deliberate Publish.
 
 ---
@@ -121,3 +121,4 @@ Two things change: **the content models and the styling.** For a dental clinic, 
 - The provided admin credential is a demo one, to be rotated before real client content.
 - Placeholder images (placehold.co) are used where real photography does not exist yet; a one-off idempotent script (`npm run fix-placeholder-urls`) keeps them compatible with next/image.
 - Six npm audit findings exist in build tooling (not runtime); noted, not fixed.
+- Server-side upload enforcement covers type fully (the format restriction is cryptographically signed, so it can't be bypassed). Size is enforced strictly in the browser (5 MB) but only up to Cloudinary's plan ceiling (~10 MB) on the server — a file between 5 and 10 MB could be uploaded by bypassing the browser. A signed max_file_size preset would close this gap and is the natural next step.

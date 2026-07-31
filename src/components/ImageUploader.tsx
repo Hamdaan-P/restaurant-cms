@@ -41,7 +41,7 @@ export function ImageUploader({
 
     setUploading(true);
     try {
-      const { signature, timestamp, apiKey, cloudName, folder } =
+      const { signature, timestamp, apiKey, cloudName, folder, allowed_formats } =
         await signUpload();
 
       const uploadData = new FormData();
@@ -50,6 +50,7 @@ export function ImageUploader({
       uploadData.append("timestamp", String(timestamp));
       uploadData.append("signature", signature);
       uploadData.append("folder", folder);
+      uploadData.append("allowed_formats", allowed_formats);
 
       const response = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,

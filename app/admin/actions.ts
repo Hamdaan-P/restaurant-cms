@@ -160,9 +160,10 @@ export async function signUpload() {
 
   const timestamp = Math.round(Date.now() / 1000);
   const folder = "restaurant-cms";
+  const allowed_formats = "jpg,png,webp";
 
   const signature = cloudinary.utils.api_sign_request(
-    { timestamp, folder },
+    { timestamp, folder, allowed_formats },
     process.env.CLOUDINARY_API_SECRET!
   );
 
@@ -172,6 +173,7 @@ export async function signUpload() {
     apiKey: process.env.CLOUDINARY_API_KEY,
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
     folder,
+    allowed_formats,
   };
 }
 
